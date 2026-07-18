@@ -1,0 +1,38 @@
+version: 2.1
+
+jobs:
+  build-opensips-pkg:
+    # EhWS KubeVirt FreeBSD executor (matches Inferno 15.1-RELEASE).
+    # See ehws-infra .cursor/rules/circleci-executor-classes.mdc
+    machine:
+      image: freebsd-15.1:current
+    resource_class: freebsd.medium
+    steps:
+      - checkout
+      - run:
+          name: Install packaging prerequisites
+          command: |
+            set -eux
+            export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+            sudo pkg update -f
+            sudo pkg install -y git gmake bison flex pkgconf ca_root_nss \
+              coreutils gtar bash
+            chmod +x scripts/*.sh
+            test -f net/opensips/Makefile
+            test -f net/opensips/files/opensips.in
+      - run:
+          name: Build FreeBSD package (fail-closed)
+          no_output_timeout: 60m
+          command: |
+            set -eux
+            export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+            ./scripts/ci-package.sh
+            ls -la dist/
+      - store_artifacts:
+          path: dist
+          destination: opensips-freebsd-packages
+
+workflows:
+  build-opensips-pkg:
+    jobs:
+      - build-opensips-pkg

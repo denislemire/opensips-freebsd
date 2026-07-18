@@ -1,0 +1,6 @@
+.ref/
+dist/
+work/
+net/opensips/work/
+*.pkg
+.DS_Store

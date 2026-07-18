@@ -1,0 +1,25 @@
+[
+{ type: install
+  message: <<EOM
+OpenSIPS ${PKGVERSION} was installed.
+
+Enable and start with:
+  sysrc opensips_enable=YES
+  service opensips start
+
+Configure shared / private memory in rc.conf if needed:
+  opensips_shmem_size="64"   # -m, megabytes
+  opensips_pkmem_size="8"    # -M, megabytes
+  opensips_user="opensips"
+  opensips_group="opensips"
+  opensips_config="/usr/local/etc/opensips/opensips.cfg"
+
+Edit ${PREFIX}/etc/opensips/opensips.cfg (installed from the .sample).
+
+Docs: https://opensips.org/Documentation/Manuals
+Migration: https://www.opensips.org/Documentation/Migration
+
+RTP/media: consider net/rtpengine or net/rtpproxy alongside this port.
+EOM
+}
+]

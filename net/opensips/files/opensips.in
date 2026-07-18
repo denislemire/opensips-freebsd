@@ -1,0 +1,49 @@
+#!/bin/sh
+
+# PROVIDE: opensips
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+#
+# Add the following lines to /etc/rc.conf to enable OpenSIPS:
+#
+# opensips_enable (bool):	Set to NO by default.
+#				Set to YES to enable opensips.
+# opensips_config (path):	Config file.
+#				Default: %%PREFIX%%/etc/opensips/opensips.cfg
+# opensips_shmem_size (int):	Shared memory size in MiB (-m). Default: 64
+# opensips_pkmem_size (int):	Private memory size in MiB (-M). Default: 8
+# opensips_user (user):		Run as user. Default: opensips
+# opensips_group (group):	Run as group. Default: opensips
+# opensips_flags (str):		Extra flags appended after memory/user args.
+#
+
+. /etc/rc.subr
+
+name="opensips"
+desc="OpenSIPS SIP server"
+rcvar=opensips_enable
+
+load_rc_config ${name}
+
+: ${opensips_enable:="NO"}
+: ${opensips_config:="%%PREFIX%%/etc/opensips/opensips.cfg"}
+: ${opensips_shmem_size:="64"}
+: ${opensips_pkmem_size:="8"}
+: ${opensips_user:="opensips"}
+: ${opensips_group:="opensips"}
+: ${opensips_flags:=""}
+
+pidfile="/var/run/${name}/${name}.pid"
+required_files="${opensips_config}"
+command="%%PREFIX%%/sbin/${name}"
+command_args="-P ${pidfile} -f ${opensips_config} -m ${opensips_shmem_size} -M ${opensips_pkmem_size} -u ${opensips_user} -g ${opensips_group} ${opensips_flags}"
+
+start_precmd="opensips_prestart"
+
+opensips_prestart()
+{
+	install -d -o "${opensips_user}" -g "${opensips_group}" -m 755 \
+		"/var/run/${name}"
+}
+
+run_rc_command "$1"
