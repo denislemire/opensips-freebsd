@@ -28,6 +28,9 @@ SHEBANG_GLOB=		*.sh *.pl *.py *.php
 USERS=			opensips
 GROUPS=			opensips
 
+# FreeBSD needs an explicit pthread link for OpenSIPS's locking/thread helpers.
+LDFLAGS+=		-pthread
+
 WRKSRC=			${WRKDIR}/${GH_PROJECT}-${DISTVERSION}
 
 OPTIONS_DEFINE=		CARRIERROUTE CGRATES COMPRESSION CASSANDRA COUCHBASE \
@@ -238,6 +241,7 @@ OPENSIPS_MAKE_ENV=	CC="${CC}" \
 			CXX="${CXX}" \
 			CFLAGS="${CFLAGS}" \
 			LDFLAGS="${LDFLAGS}" \
+			LIBS="-pthread" \
 			PREFIX="${PREFIX}"
 
 do-configure:
