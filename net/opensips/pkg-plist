@@ -1,10 +1,7 @@
 sbin/opensips
 sbin/osipsconfig
-sbin/opensips-m4cfg
-man/man5/opensips.cfg.5.gz
-man/man8/opensips.8.gz
-man/man8/opensips-m4cfg.8.gz
-man/man8/osipsconfig.8.gz
+man/man5/opensips.cfg.5
+man/man8/opensips.8
 @sample etc/opensips/opensips.cfg.sample
 @dir etc/opensips
 @dir lib/opensips/modules

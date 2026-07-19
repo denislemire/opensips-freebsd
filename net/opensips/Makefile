@@ -31,6 +31,10 @@ GROUPS=			opensips
 # FreeBSD needs an explicit pthread link for OpenSIPS's locking/thread helpers.
 LDFLAGS+=		-pthread
 
+# Keep man pages uncompressed in the package (matches FreeBSD CI images that
+# set NO_MANCOMPRESS / skip compress-man content changes).
+NO_COMPRESS_MAN=	yes
+
 WRKSRC=			${WRKDIR}/${GH_PROJECT}-${DISTVERSION}
 
 OPTIONS_DEFINE=		CARRIERROUTE CGRATES COMPRESSION CASSANDRA COUCHBASE \
