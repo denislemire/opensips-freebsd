@@ -36,8 +36,14 @@ if [ ! -f "${PORTS_TREE}/Mk/bsd.port.mk" ]; then
 		https://github.com/freebsd/freebsd-ports.git "${TMP}/ports"
 	(
 		cd "${TMP}/ports"
-		git sparse-checkout set Mk Templates Keywords Tools UIDs GIDs
+		# Cone mode only accepts directories — UIDs/GIDs are root files.
+		git sparse-checkout set Mk Templates Keywords Tools
 	)
+	# Root UID/GID maps: fetch as plain files (not sparse-checkout paths).
+	curl -fsSL -o "${TMP}/ports/UIDs" \
+		https://raw.githubusercontent.com/freebsd/freebsd-ports/main/UIDs
+	curl -fsSL -o "${TMP}/ports/GIDs" \
+		https://raw.githubusercontent.com/freebsd/freebsd-ports/main/GIDs
 	# Prefer merging into an empty tree; sudo install for /usr/ports.
 	sudo mkdir -p "${PORTS_TREE}"
 	sudo cp -a "${TMP}/ports/Mk" "${TMP}/ports/Templates" \
