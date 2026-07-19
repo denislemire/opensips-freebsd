@@ -29,27 +29,15 @@ mkdir -p "${OUT_DIR}"
 rm -f "${OUT_DIR}"/opensips-*.pkg
 
 if [ ! -f "${PORTS_TREE}/Mk/bsd.port.mk" ]; then
-	echo "Bootstrapping sparse ports tree at ${PORTS_TREE}"
-	sudo mkdir -p "${PORTS_TREE}"
+	echo "Bootstrapping ports tree at ${PORTS_TREE}"
+	# Need the full tree (not Mk-only sparse): USE_PACKAGE_DEPENDS still
+	# resolves LIB_DEPENDS/USES origins under ${PORTSDIR}/category/port.
 	TMP="$(mktemp -d /tmp/ports-XXXXXX)"
-	git clone --depth 1 --filter=blob:none --sparse \
+	git clone --depth 1 --single-branch \
 		https://github.com/freebsd/freebsd-ports.git "${TMP}/ports"
-	(
-		cd "${TMP}/ports"
-		# Cone mode only accepts directories — UIDs/GIDs are root files.
-		git sparse-checkout set Mk Templates Keywords Tools
-	)
-	# Root UID/GID maps: fetch as plain files (not sparse-checkout paths).
-	curl -fsSL -o "${TMP}/ports/UIDs" \
-		https://raw.githubusercontent.com/freebsd/freebsd-ports/main/UIDs
-	curl -fsSL -o "${TMP}/ports/GIDs" \
-		https://raw.githubusercontent.com/freebsd/freebsd-ports/main/GIDs
-	# Prefer merging into an empty tree; sudo install for /usr/ports.
-	sudo mkdir -p "${PORTS_TREE}"
-	sudo cp -a "${TMP}/ports/Mk" "${TMP}/ports/Templates" \
-		"${TMP}/ports/Keywords" "${TMP}/ports/Tools" \
-		"${TMP}/ports/UIDs" "${TMP}/ports/GIDs" "${PORTS_TREE}/"
-	rm -rf "${TMP}"
+	sudo rm -rf "${PORTS_TREE}"
+	sudo mv "${TMP}/ports" "${PORTS_TREE}"
+	rmdir "${TMP}" 2>/dev/null || rm -rf "${TMP}"
 fi
 
 # Ensure USERS/GROUPS entries exist (removed with the old net/opensips port).

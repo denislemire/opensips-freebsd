@@ -42,7 +42,8 @@ jobs:
             export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
             sudo pkg update -f
             sudo pkg install -y git gmake bison flex pkgconf ca_root_nss \
-              coreutils gtar bash
+              coreutils gtar bash \
+              libmicrohttpd mysql84-client postgresql18-client
             chmod +x scripts/*.sh
             test -f net/opensips/Makefile
             test -f net/opensips/files/opensips.in
